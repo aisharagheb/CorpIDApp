@@ -1,15 +1,15 @@
 <div class="451qa_prod_item row" ng-swipe-left="showSwipe = true">
     <div class="col-sm-4 text-center">
-        <a class="thumbnail" href="product/{{LineItem.Product.InteropID}}">
+        <a class="thumbnail">
             <figure ng-show="LineItem.Variant.SmallImageUrl || LineItem.Product.SmallImageUrl" >
                 <img ng-src="{{LineItem.Variant.SmallImageUrl || LineItem.Product.SmallImageUrl}}"/>
             </figure>
             <div class="empty" ng-hide="LineItem.Variant.SmallImageUrl || LineItem.Product.SmallImageUrl">
                 <span class="fa empty"><i class="fa fa-camera"></i></span>
             </div>
-            <div class="btn btn-default">
+            <button ng-click="getVariant(LineItem.Product)" class="btn btn-default">
                 {{'View' | r}} {{'Product' | r}}
-            </div>
+            </button>
         </a>
     </div>
     <div class="col-sm-8 text-left">
@@ -47,7 +47,7 @@
             <p ng-show="inventoryDisplay(LineItem.Product, LineItem.Variant)">
                 {{'Quantity Available' | r}}: {{inventoryDisplay(LineItem.Product, LineItem.Variant) }}
             </p>
-            <button class="btn btn-default" redirect="product/{{LineItem.Product.InteropID}}">
+            <button class="btn btn-default" redirect="corpidorder/{{LineItem.Product.InteropID}}">
                 {{'View' | r}} {{'Product' | r}}
             </button>
         </div>

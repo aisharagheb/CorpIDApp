@@ -78,3 +78,14 @@ four51.app.filter('paginate', function() {
 		return input.slice(start);
 	}
 });
+
+four51.app.filter('variable', function() {
+    return function(value) {
+        var output = [];
+        angular.forEach(value, function(v) {
+            if (v.Type == 'VariableText')
+                output.push(v);
+        });
+        return output;
+    }
+});

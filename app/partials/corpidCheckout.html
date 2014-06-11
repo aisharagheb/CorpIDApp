@@ -1,0 +1,11 @@
+<section>
+    <div class="container">
+        <div ng-if="currentOrder">
+            <orderdetails ng-show="hasOrderConfig" />
+            <ordershipping />
+            <orderbilling />
+            <orderapprovals ng-show="currentOrder.Approvals" />
+            <ordersummary />
+        </div>
+    </div>
+</section>

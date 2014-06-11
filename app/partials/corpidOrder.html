@@ -1,0 +1,33 @@
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="panel-product-list">
+                    <div ng-show="products" class="alert alert-info text-center hidden-sm hidden-md hidden-lg">
+                        <i class="fa fa-arrow-circle-o-left"></i>
+                        Swipe product left for more info
+                    </div>
+                    <div>
+                        <ul>
+                            <li id="451_lst_prod" ng-repeat="product in LineItem.Product.List | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize | orderBy:sorter:direction | variable">
+                                <div class="well">
+                                    <shortproductview p="product" user="user" />
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="form-group" ng-repeat="s in Specs | onproperty:[{Property: 'CanSetForLineItem', Value: false}, {Property: 'DefinesVariant', Value: false}]">
+                    <customfilefield hideSuffix="true" hidePrefix="true" customfield="s" ng-if="s.ControlType == 'File'"></customfilefield>
+                    <customtextfield hideSuffix="true" hidePrefix="true" customfield="s" ng-if="s.ControlType == 'Text'"></customtextfield>
+                    <customselectionfield hideSuffix="true" hidePrefix="true" customfield="s" ng-if="s.ControlType == 'Selection'" class="row"></customselectionfield>
+                </div>
+                <div ng-show="Specs" class="alert alert-success">
+                    <button class="btn btn-primary pull-right" type="submit" ng-click="createOrder()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
