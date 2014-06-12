@@ -348,20 +348,30 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
 
         //My Code
         $scope.Specs = {};
-
-        $scope.$on('loaded',function(event,v){
-            angular.forEach(v, function(s) {
-                if(!$scope.Specs[s.Name]){
+        $scope.selectedProducts = [];
+        $scope.$on('loaded',function(event,v) {
+            $scope.specs = v.Specs;
+            if( $scope.selectedProducts == ""){
+                $scope.selectedProducts.push(v);
+            }
+            var isInArr = false;
+            angular.forEach($scope.selectedProducts, function(m){
+                if(m.InteropID == v.InteropID){
+                    isInArr = true;
+                }
+            });
+            if(!isInArr){
+                $scope.selectedProducts.push(v);
+            }
+            angular.forEach($scope.specs, function (s) {
+                if (!$scope.Specs[s.Name]) {
                     $scope.Specs[s.Name] = s;
                 }
             });
         });
 
         $scope.createOrder = function() {
-
-            $scope.selectedProducts = [];
-            var lineItems = []
-            $scope.selectedProducts.push(product);
+            var lineItems = [];
             angular.forEach($scope.selectedProducts, function(p){
                 var variant = {
                     "ProductInteropID": p.InteropID,
@@ -369,7 +379,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                 };
                 Variant.save(variant, function(v){
                     var lineitem = {
-                        "Quantity": p.Quantity,
+                        "Quantity": 1,
                         "Variant": v,
                         "Product": p,
                         "LineTotal": p.StandardPriceSchedule.PriceBreaks[0]* p.length,
@@ -377,20 +387,21 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                         "Specs": $scope.Specs
                     };
                     lineItems.push(lineitem);
-                });
-                if(lineItems.length == $scope.selectedProducts.lenght){
-                    var order = {};
-                    order.LineItems = [];
-                    angular.forEach(lineItems, function(li){
-                        order.LineItems.push(li);
-                    });
-                    Order.save(order,function(o){
-                        $scope.user.currentOrderID = o.ID;
-                        User.save($scope.user, function(user){
-                            $location.path('corpidCheckout');
+
+                    if(lineItems.length == $scope.selectedProducts.length){
+                        var order = {};
+                        order.LineItems = [];
+                        angular.forEach(lineItems, function(li){
+                            order.LineItems.push(li);
+                        });
+                        Order.save(order,function(o){
+                            $scope.user.currentOrderID = o.ID;
+                            User.save($scope.user, function(user){
+                                $location.path('corpidCheckout');
+                            })
                         })
-                    })
-                }
+                    }
+                });
             })
         };
     }]);

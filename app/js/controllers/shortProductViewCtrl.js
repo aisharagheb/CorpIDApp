@@ -7,9 +7,9 @@ four51.app.controller('shortProductViewCtrl', ['$routeParams', '$scope', 'Produc
 
     //My Code
     $scope.getVariant = function(data) {
+        console.log("this is hit");
         Product.get(data.InteropID, function(p){
-            $scope.specs = p.Specs;
-            $rootScope.$broadcast("loaded", p.Specs);
+            $rootScope.$broadcast("loaded", p);
         })
     }
 }]);
