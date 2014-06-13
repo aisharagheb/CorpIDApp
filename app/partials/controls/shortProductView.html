@@ -7,10 +7,10 @@
             <div class="empty" ng-hide="LineItem.Variant.SmallImageUrl || LineItem.Product.SmallImageUrl">
                 <span class="fa empty"><i class="fa fa-camera"></i></span>
             </div>
-            <button ng-disabled="!LineItem.Quantity" ng-click="getVariant(LineItem)" class="btn btn-default">
+            <button ng-disabled="!LineItem.Quantity" ng-click="getVariant(LineItem)" ng-show="!LineItem.Product.selected" class="btn btn-default">
                 Select
             </button>
-            <button id="remove" ng-click="removeVariant(LineItem)" class="btn btn-default">
+            <button id="remove" ng-click="removeVariant(LineItem)" ng-show="LineItem.Product.selected" class="btn btn-default">
                 Remove
             </button>
         </a>

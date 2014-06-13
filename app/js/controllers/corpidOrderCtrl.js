@@ -98,6 +98,9 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
         }
         function init(searchTerm) {
             ProductDisplayService.getProductAndVariant($routeParams.productInteropID, $routeParams.variantInteropID, function (data) {
+                angular.forEach(data.product.List, function(p) {
+                    p.selected = false;
+                });
                 $scope.LineItem.Product = data.product;
                 $scope.LineItem.Variant = data.variant;
                 setDefaultQty($scope.LineItem);
@@ -386,7 +389,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
         $scope.selectedProducts = [];
         $scope.$on('loaded',function(event,v) {
             $scope.specs = v.Specs;
-            if( $scope.selectedProducts == ""){
+            if( $scope.selectedProducts.length == 0){
                 $scope.selectedProducts.push(v);
             }
             var isInArr = false;
@@ -401,7 +404,12 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
             }
             angular.forEach($scope.specs, function (s) {
                 if (!$scope.Specs[s.Name]) {
+                    s.Products = [];
+                    s.Products.push(v.ExternalID);
                     $scope.Specs[s.Name] = s;
+                }
+                else {
+                    $scope.Specs[s.Name].Products.push(v.ExternalID);
                 }
             });
         });
@@ -415,11 +423,25 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
             });
             if(isInArr){
                 v.selected = false;
-                $scope.selectedProducts.splice(v);
+                for (var i = 0; i < $scope.selectedProducts.length; i++) {
+                    if ($scope.selectedProducts[i].InteropID == v.InteropID) {
+                        $scope.selectedProducts.splice(i, 1);
+                    }
+                }
             }
             angular.forEach($scope.specs, function (s) {
-//                if()
-                      delete $scope.Specs[s.Name]
+                angular.forEach($scope.Specs, function(spec) {
+                    if (s.Name == spec.Name) {
+                        for (var i = 0; i < spec.Products.length; i++) {
+                            if (spec.Products[i] == v.ExternalID) {
+                                if (spec.Products.length == 1) {
+                                    delete $scope.Specs[s.Name];
+                                }
+                                spec.Products.splice(i, 1);
+                            }
+                        }
+                    }
+                });
             });
         });
 

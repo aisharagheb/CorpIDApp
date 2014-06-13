@@ -7,14 +7,16 @@ four51.app.controller('shortProductViewCtrl', ['$routeParams', '$scope', 'Produc
 
     //My Code
     $scope.getVariant = function(data) {
+        data.Product.selected = true;
         Product.get(data.Product.InteropID, function(p){
             p.Quantity = data.Quantity
             $rootScope.$broadcast("loaded", p);
         })
     }
     $scope.removeVariant = function(data) {
+        data.Product.selected = false;
         Product.get(data.Product.InteropID, function(p){
-            p.Quantity = data.Quantity
+            p.Quantity = null;
             $rootScope.$broadcast("unloaded", p);
         })
     }
