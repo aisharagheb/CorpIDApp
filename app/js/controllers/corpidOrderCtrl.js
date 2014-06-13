@@ -1,7 +1,6 @@
 four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav', '$rootScope','ProductDisplayService', 'Order', 'Variant', 'User', '$route', '$location', 'AddressList', 'FavoriteOrder', 'OrderConfig', 'Analytics','$filter',
     function ($routeParams, $sce, $scope, $451, Category, Product, Nav, $rootScope, ProductDisplayService, Order, Variant, User, $route, $location, AddressList, FavoriteOrder, OrderConfig, Analytics, $filter) {
 
-
 //        categoryCtrl
 
         $scope.productLoadingIndicator = true;
@@ -322,7 +321,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                         User.save($scope.user, function(data) {
                             $scope.user = data;
                             $scope.displayLoadingIndicator = false;
-                            $location.path('catalog');
+                            $location.path('corpidorder');
                         });
                     },
                     function(ex) {
@@ -345,6 +344,42 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
             FavoriteOrder.save($scope.currentOrder);
         };
 
+        //CartCtrl
+        $scope.saveChanges = function(callback) {
+            $scope.actionMessage = null;
+            $scope.errorMessage = null;
+            if($scope.currentOrder.LineItems.length == $451.filter($scope.currentOrder.LineItems, {Property:'Selected', Value: true}).length) {
+                $scope.cancelOrder();
+            }
+            else {
+                $scope.displayLoadingIndicator = true;
+                OrderConfig.address($scope.currentOrder, $scope.user);
+                Order.save($scope.currentOrder,
+                    function(data) {
+                        $scope.currentOrder = data;
+                        $scope.displayLoadingIndicator = false;
+                        if (callback) callback();
+                        $scope.actionMessage = 'Your Changes Have Been Saved!';
+                    },
+                    function(ex) {
+                        $scope.errorMessage = ex.Message;
+                        $scope.displayLoadingIndicator = false;
+                    }
+                );
+            }
+        };
+        $scope.removeItem = function(item) {
+            if ($scope.currentOrder.LineItems.length > 1) {
+                if (confirm('Are you sure you wish to remove this item from your cart?') == true) {
+                    item.Selected = true;
+                    $scope.saveChanges();
+                }
+            }
+            else {
+                item.Selected = true;
+                $scope.saveChanges();
+            }
+        }
 
         //My Code
         $scope.Specs = {};
@@ -361,12 +396,30 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                 }
             });
             if(!isInArr){
+                v.selected = true;
                 $scope.selectedProducts.push(v);
             }
             angular.forEach($scope.specs, function (s) {
                 if (!$scope.Specs[s.Name]) {
                     $scope.Specs[s.Name] = s;
                 }
+            });
+        });
+        $scope.$on('unloaded',function(event,v) {
+            $scope.specs = v.Specs;
+            var isInArr = false;
+            angular.forEach($scope.selectedProducts, function(m){
+                if(m.InteropID == v.InteropID){
+                    isInArr = true;
+                }
+            });
+            if(isInArr){
+                v.selected = false;
+                $scope.selectedProducts.splice(v);
+            }
+            angular.forEach($scope.specs, function (s) {
+//                if()
+                      delete $scope.Specs[s.Name]
             });
         });
 
@@ -379,7 +432,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                 };
                 Variant.save(variant, function(v){
                     var lineitem = {
-                        "Quantity": 1,
+                        "Quantity": p.Quantity,
                         "Variant": v,
                         "Product": p,
                         "LineTotal": p.StandardPriceSchedule.PriceBreaks[0]* p.length,

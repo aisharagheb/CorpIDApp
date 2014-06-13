@@ -101,7 +101,7 @@ function ($scope, $location, $filter, $rootScope, $451, Analytics, User, Order, 
 			        User.save($scope.user, function(data) {
 				        $scope.user = data;
 				        $scope.displayLoadingIndicator = false;
-				        $location.path('catalog');
+				        $location.path('corpidorder');
 			        });
 		        },
 		        function(ex) {

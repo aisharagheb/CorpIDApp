@@ -3,27 +3,16 @@
         <section>
             <div class="container">
                 <ul class="nav navbar-nav pull-left">
-                    <li class="back animated fadeInLeft" ng-class="{'ng-hide': isActive('catalog')}">
-                        <a href back-step class="back">
-                            <i class="fa fa-arrow-left"></i>
-                        </a>
-                    </li>
                     <li class="products" ng-class="{'active': isInPath('catalog') || isInPath('product') || isInPath('cart/default') || isInPath('search')}">
-                        <a id="451qa_home_link" ng-show="Four51User.isAuthenticated()" href="catalog">
+                        <a id="451qa_home_link" ng-show="Four51User.isAuthenticated()" href="corpidorder">
                             <i class="fa fa-home"></i>
-                            <span class="hidden-xs">{{'Products' | rc}}</span>
+                            <span class="hidden-xs">{{'Home' | rc}}</span>
                         </a>
                     </li>
                     <li class="order" ng-class="{'active': isActive('order'), 'active-xs': isActive('favoriteorders')}">
                         <a id="451qa_order_link" href="order">
                             <i class="fa fa-clipboard"></i>
                             <span class="hidden-xs">{{'Orders' | r}}</span>
-                        </a>
-                    </li>
-                    <li class="report" ng-if="AppConst.debug" ng-class="{'active': isActive('reports')}">
-                        <a id="451qa_order_link" href="reports">
-                            <i class="fa fa-bar-chart-o"></i>
-                            <span class="hidden-xs">{{'Reports' | r}}</span>
                         </a>
                     </li>
                     <li ng-class="{'active': isActive(['admin', 'addresses', 'address', 'messages', 'message', 'favoriteorders'])}">
@@ -81,8 +70,8 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-nav pull-right">
-                    <li class="cart" ng-class="{'active': isActive(['cart', 'checkout'])}">
-                        <a id="451qa_cart_link" ng-show="cartCount" class="cart" href="cart">
+                    <li class="cart" ng-class="{'active': isActive('corpidorder')}">
+                        <a id="451qa_cart_link" ng-show="cartCount" class="cart" href="corpidCheckout">
                             <span ng-bind="cartCount" class="badge"></span>
                             <i class="fa fa-shopping-cart"></i>
                             <i class="fa fa-caret-down"></i>
@@ -91,13 +80,5 @@
                 </ul>
             </div>
         </section>
-    </nav>
-    <nav class="dropdown-mega">
-        <a class="dropdown-toggle text-center" data-toggle="dropdown">
-            <i class="fa fa-angle-down text-primary"></i>
-        </a>
-        <ul class="451qa_topnav dropdown-menu" >
-            <categorytree tree='tree' current='currentCategory' />
-        </ul>
     </nav>
 </header>

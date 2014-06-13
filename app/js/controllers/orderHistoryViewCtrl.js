@@ -61,7 +61,7 @@ function ($scope, $location, $routeParams, Order, FavoriteOrder, Address, User) 
 	            $scope.user.CurrentOrderID = data.ID;
 	            User.save($scope.user, function(data){
 	                $scope.user = data;
-	                $location.path('/cart');
+	                $location.path('/corpidCheckout');
 	            });
             },
 	        function(ex) {
