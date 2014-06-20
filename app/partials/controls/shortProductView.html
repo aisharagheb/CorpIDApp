@@ -1,59 +1,56 @@
 <div class="451qa_prod_item row" ng-swipe-left="showSwipe = true">
-    <div class="col-sm-4 text-center">
-        <a class="thumbnail">
-            <figure ng-show="LineItem.Variant.SmallImageUrl || LineItem.Product.SmallImageUrl" >
-                <img ng-src="{{LineItem.Variant.SmallImageUrl || LineItem.Product.SmallImageUrl}}"/>
-            </figure>
-            <div class="empty" ng-hide="LineItem.Variant.SmallImageUrl || LineItem.Product.SmallImageUrl">
-                <span class="fa empty"><i class="fa fa-camera"></i></span>
-            </div>
-            <button ng-disabled="!LineItem.Quantity" ng-click="getVariant(LineItem)" ng-show="!LineItem.Product.selected" class="btn btn-default">
-                Select
-            </button>
-            <button id="remove" ng-click="removeVariant(LineItem)" ng-show="LineItem.Product.selected" class="btn btn-default">
-                Remove
-            </button>
-        </a>
-    </div>
-    <div class="col-sm-8 text-left">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="panel-body">
-            <h3>{{LineItem.Product.Name}}
-                <small class="pull-right text-info">{{LineItem.Product.ExternalID}}</small>
-            </h3>
-            <p ng-bind-html="trustedDescription(LineItem.Product)" ng-show="LineItem.Product.Description" />
-        </div>
-        <section class="hidden-xs hidden-sm panel-body">
-            <p ng-show="LineItem.PriceSchedule.PriceBreaks[0]" ng-if="!(user.Permissions.contains('HidePricing'))">
-                {{LineItem.PriceSchedule.PriceBreaks[0].Quantity}}
-                <span ng-show="LineItem.Product.QuantityMultiplier > 1">(x {{LineItem.Product.QuantityMultiplier}})</span>
-                for {{LineItem.PriceSchedule.PriceBreaks[0].Price | currency}}
-            </p>
-            <p ng-show="LineItem.Product.UnitOfMeasure">
-                {{'Unit of Measure' | r}}: {{LineItem.Product.UnitOfMeasure}}
-            </p>
+            <section class="col-xs-12 col-sm-12 col-md-2 col-lg-2 text-center buttonConfig">
+                <a class="thumbnail">
+                    <!--<span ng-show="!LineItem.Quantity" class="fa fa-chevron-down fa-lg" ng-class="{'fa-3x': showButton == true, 'fa-2x' : showButton == true, 'fa-lg' : showButton == true}"></span>-->
+                    <button ng-disabled="!LineItem.Product.selected" ng-show="!LineItem.Quantity" ng-hide="LineItem.Quantity" class="btn btn-default">
+                        Select
+                    </button>
+                    <button ng-click="getVariant(LineItem)" ng-show="!LineItem.Product.selected" ng-hide="!LineItem.Quantity" class="btn btn-success">
+                        Select
+                    </button>
+                    <button id="remove" ng-click="removeVariant(LineItem)" ng-show="LineItem.Product.selected" class="btn btn-danger">
+                        Remove
+                    </button>
+                </a>
+            </section>
+            <section class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+                <h3>{{LineItem.Product.Name}}</h3>
+                <p class="text-info">{{LineItem.Product.ExternalID}}</p>
+                <p ng-bind-html="trustedDescription(LineItem.Product)" ng-show="LineItem.Product.Description" />
+                <p ng-show="LineItem.PriceSchedule.PriceBreaks[0]" ng-if="!(user.Permissions.contains('HidePricing'))">
+                    {{LineItem.PriceSchedule.PriceBreaks[0].Quantity}}
+                    <span ng-show="LineItem.Product.QuantityMultiplier > 1">(x {{LineItem.Product.QuantityMultiplier}})</span>
+                    for {{LineItem.PriceSchedule.PriceBreaks[0].Price | currency}}
+                </p>
+                <p ng-show="LineItem.Product.UnitOfMeasure">
+                    {{'Unit of Measure' | r}}: {{LineItem.Product.UnitOfMeasure}}
+                </p>
 
-            <p ng-show="LineItem.Product.DisplayInventory && inventoryDisplay(LineItem.Product, LineItem.Variant) != undefined">
-                {{'Quantity Available' | r}}: {{inventoryDisplay(LineItem.Product, LineItem.Variant) }}
-            </p>
-            <quantityfield required="true" calculated="calcVariantLineItems" lineitem="LineItem" class="quantity" />
-        </section>
-    </div>
-    <section ng-show="showSwipe" ng-swipe-right="showSwipe = false">
-        <div class="shortproduct-info panel-body text-center">
-            <p ng-show="LineItem.PriceSchedule.PriceBreaks[0]" ng-if="!(user.Permissions.contains('HidePricing'))">
-                {{LineItem.PriceSchedule.PriceBreaks[0].Quantity}}
-                <span ng-show="LineItem.Product.QuantityMultiplier > 1">(x {{LineItem.Product.QuantityMultiplier}})</span>
-                for {{LineItem.PriceSchedule.PriceBreaks[0].Price | currency}}
-            </p>
-            <p ng-show="LineItem.Product.UnitOfMeasure">
-                {{'Unit of Measure' | r}}: {{LineItem.Product.UnitOfMeasure}}
-            </p>
-            <p ng-show="inventoryDisplay(LineItem.Product, LineItem.Variant)">
-                {{'Quantity Available' | r}}: {{inventoryDisplay(LineItem.Product, LineItem.Variant) }}
-            </p>
-            <button class="btn btn-default" redirect="corpidorder/{{LineItem.Product.InteropID}}">
-                {{'View' | r}} {{'Product' | r}}
-            </button>
-        </div>
-    </section>
-</div>
+                <p ng-show="LineItem.Product.DisplayInventory && inventoryDisplay(LineItem.Product, LineItem.Variant) != undefined">
+                    {{'Quantity Available' | r}}: {{inventoryDisplay(LineItem.Product, LineItem.Variant) }}
+                </p>
+                <quantityfield required="true" calculated="calcVariantLineItems" lineitem="LineItem" class="quantity" />
+            </section>
+            <section ng-show="showSwipe" ng-swipe-right="showSwipe = false" class="col-xs-11 col-sm-10 col-md-10 col-lg-10">
+                <div class="shortproduct-info panel-body text-center">
+                    <p ng-show="LineItem.PriceSchedule.PriceBreaks[0]" ng-if="!(user.Permissions.contains('HidePricing'))">
+                        {{LineItem.PriceSchedule.PriceBreaks[0].Quantity}}
+                        <span ng-show="LineItem.Product.QuantityMultiplier > 1">(x {{LineItem.Product.QuantityMultiplier}})</span>
+                        for {{LineItem.PriceSchedule.PriceBreaks[0].Price | currency}}
+                    </p>
+                    <p ng-show="LineItem.Product.UnitOfMeasure">
+                        {{'Unit of Measure' | r}}: {{LineItem.Product.UnitOfMeasure}}
+                    </p>
+                    <p ng-show="inventoryDisplay(LineItem.Product, LineItem.Variant)">
+                        {{'Quantity Available' | r}}: {{inventoryDisplay(LineItem.Product, LineItem.Variant) }}
+                    </p>
+                    <button class="btn btn-default" redirect="corpidorder/{{LineItem.Product.InteropID}}">
+                        {{'View' | r}} {{'Product' | r}}
+                    </button>
+                </div>
+            </section>
+        </div><!--.panel-body-->
+    </div><!--.col-xs-12 col-sm-12 col-md-5 col-lg-5-->
+</div><!--.451qa_prod_item row-->

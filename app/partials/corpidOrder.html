@@ -1,35 +1,75 @@
 <section>
+    <div class="well">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <h2>Simple 3-Step Checkout</h2>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" ng-class="{'hidden-xs': showButton == true, 'hidden-sm' : showButton == true}">
+                <div class="alert text-center" ng-class="{'alert-info': showButton == false, 'alert-success': showButton == true}">
+                    <b>Step 1&mdash;</b>Select one or more products to configure
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                <div ng-hide="showButton === false" class="alert text-center" ng-class="{'alert-info': showButton == true, 'alert-success': showButton == false}">
+                    <b>Step 2&mdash;</b>Create product variant for sure
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <progressbar value="progress">{{progress}}%</progressbar>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="configure">
+
     <div class="container">
         <div class="row">
-            <div class="col-xs-6">
+            <!-- this is the one that fixes shortProductView gah -->
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6"> <!--ng-class="{'hidden-xs hidden-sm':step != 1}-->
                 <div class="panel-product-list">
                     <div ng-show="products" class="alert alert-info text-center hidden-sm hidden-md hidden-lg">
                         <i class="fa fa-arrow-circle-o-left"></i>
                         Swipe product left for more info
                     </div>
-                    <div>
-                        <ul>
-                            <li id="451_lst_prod" ng-repeat="product in LineItem.Product.List | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize | orderBy:sorter:direction | variable">
-                                <div class="well">
-                                    <shortproductview p="product" user="user" />
-                                </div>
-                            </li>
-                        </ul>
+                    <!--<div>-->
+                    <ul>
+                        <li id="451_lst_prod" ng-repeat="product in LineItem.Product.List | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize | orderBy:sorter:direction | variable">
+                            <div class="well">
+                                <shortproductview p="product" user="user" />
+                            </div>
+                        </li>
+                    </ul>
+                    <!--</div>-->
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" >
+                <div class="panel panel-info"ng-hide="showButton === true">
+                    <div class="panel-body text-center top-buffer bottom-buffer" >
+
+                        <h1><strong style="color:grey; ">Variable Specs will Appear Here</strong></h1>
+
                     </div>
                 </div>
+
+                <form name="specForm">
+                    <div class="form-group" ng-repeat="s in Specs | onproperty:[{Property: 'CanSetForLineItem', Value: false}, {Property: 'DefinesVariant', Value: false}]">
+                        <customfilefield hideSuffix="true" hidePrefix="true" customfield="s" ng-if="s.ControlType == 'File'"></customfilefield>
+                        <customtextfield hideSuffix="true" hidePrefix="true" customfield="s" ng-if="s.ControlType == 'Text'"></customtextfield>
+                        <customselectionfield hideSuffix="true" hidePrefix="true" customfield="s" ng-if="s.ControlType == 'Selection'" class="row"></customselectionfield>
+                    </div>
+                    <div ng-hide="showButton === false">
+                        <button ng-disabled="specForm.$invalid" class="btn btn-primary pull-right" type="submit" ng-click="createOrder()">Create</button>
+                    </div>
+                </form>
             </div>
-            <div class="col-xs-6">
-            <form name="specForm">
-                <div class="form-group" ng-repeat="s in Specs | onproperty:[{Property: 'CanSetForLineItem', Value: false}, {Property: 'DefinesVariant', Value: false}]">
-                    <customfilefield hideSuffix="true" hidePrefix="true" customfield="s" ng-if="s.ControlType == 'File'"></customfilefield>
-                    <customtextfield hideSuffix="true" hidePrefix="true" customfield="s" ng-if="s.ControlType == 'Text'"></customtextfield>
-                    <customselectionfield hideSuffix="true" hidePrefix="true" customfield="s" ng-if="s.ControlType == 'Selection'" class="row"></customselectionfield>
-                </div>
-                <div class="alert alert-success">
-                    <button ng-disabled="specForm.$invalid" class="btn btn-primary pull-right" type="submit" ng-click="createOrder()">Create</button>
-                </div>
-            </form>
-            </div>
-        </div>
-    </div>
+
+        </div><!--.row-->
+    </div><!--.container-->
 </section>
