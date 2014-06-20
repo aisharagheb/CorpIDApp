@@ -240,6 +240,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     },
                     function(ex) {
                         $scope.errorMessage = ex.Message;
+                        $scope.errorMessage = ex.Message;
                         $scope.displayLoadingIndicator = false;
                     }
                 );
@@ -261,7 +262,10 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     }
                 );
             }
-        }
+            if($scope.currentOrder.LineItems.length == 1){
+                $location.path('/corpidorder');
+            }
+        };
 
 
         //Jen: hides the create button until it should be displayed
@@ -405,37 +409,35 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
             }
             return result;
         };
-
-        if ($scope.isActive('corpidorder')){
-            $scope.progress = '0';
-        }
-        else {
-            $scope.progress = '66';
-        }
-
-        $scope.items = currentOrder.LineItems.length;
-
-        if ($scope.items === '0') {
-            $scope.progress = '0';
-        }
-
-        $scope.checkProgress = function(){
-            if ($scope.currentOrder.ShipAddressID && $scope.currentOrder.BillAddressID){
-                $scope.progress = '98';
-            } else if (($scope.currentOrder.ShipAddressID && !$scope.currentOrder.BillAddressID) || (!$scope.currentOrder.ShipAddressID && $scope.currentOrder.BillAddressID)){
-                $scope.progress = '82';
-            } else {
+//        Progress Bar Code
+        if($scope.currentOrder){
+            if ($scope.isActive('corpidorder')){
+                $scope.progress = '0';
+            }
+            else {
                 $scope.progress = '66';
             }
-        };
+            $scope.items = $scope.currentOrder.LineItems.length;
+            if ($scope.items === '0') {
+                $scope.progress = '0';
+            }
+            $scope.checkProgress = function(){
+                if ($scope.currentOrder.ShipAddressID && $scope.currentOrder.BillAddressID){
+                    $scope.progress = '98';
+                } else if (($scope.currentOrder.ShipAddressID && !$scope.currentOrder.BillAddressID) || (!$scope.currentOrder.ShipAddressID && $scope.currentOrder.BillAddressID)){
+                    $scope.progress = '82';
+                } else {
+                    $scope.progress = '66';
+                }
+            };
+            $scope.$watch('currentOrder.ShipAddressID', function(n) {
+                $scope.checkProgress();
+            });
+            $scope.$watch('currentOrder.BillAddressID', function(n) {
+                $scope.checkProgress();
+            });
+        }
 
-        $scope.$watch('currentOrder.ShipAddressID', function(n) {
-            $scope.checkProgress();
-        })
-
-        $scope.$watch('currentOrder.BillAddressID', function(n) {
-            $scope.checkProgress();
-        });
 
 
         $scope.$on('event:AddressSaved', function(event, address) {

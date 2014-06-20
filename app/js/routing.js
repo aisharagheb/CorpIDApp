@@ -39,6 +39,6 @@ four51.app.config(['$routeProvider', '$locationProvider', function($routeProvide
         when('/report/:id', { templateUrl: 'partials/Reporting/reportView.html', controller: 'ReportCtrl' }).
         when('/contactus/', { templateUrl: 'partials/Messages/contactus.html' }).
         when('/corpidorder', { templateUrl: 'partials/corpidOrder.html', controller: 'corpidOrderCtrl' }).
-//        when('/corpidCheckout', { templateUrl: 'partials/corpidCheckout.html', controller: 'corpidOrderCtrl' }).
+        when('/corpidCheckout', { templateUrl: 'partials/corpidCheckout.html', controller: 'corpidOrderCtrl' }).
         otherwise({redirectTo: '/corpidorder'});
 }]);
