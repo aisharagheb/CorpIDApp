@@ -10,7 +10,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
         };
         $scope.trusted = function(d){
             if(d) return $sce.trustAsHtml(d);
-        }
+        };
 
         function _search() {
             $scope.searchLoading = true;
@@ -70,7 +70,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     $scope.productCount = data.Count;
                 });
             }
-        }
+        };
 
 //        productCtrl
 
@@ -139,7 +139,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     $scope.showAddToCartErrors = true;
                 }
             );
-        }
+        };
 
         $scope.addToOrder = function(){
             if($scope.lineItemErrors && $scope.lineItemErrors.length){
@@ -174,7 +174,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     $route.reload();
                 }
             );
-        }
+        };
 
         $scope.$on('event:imageLoaded', function(event, result) {
             $scope.loadingImage = false;
@@ -209,12 +209,12 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
         }
         $scope.save = function(){
             saveVariant($scope.Variant);
-        }
+        };
 
         $scope.saveasnew = function() {
             $scope.Variant.InteropID = null;
             saveVariant($scope.Variant);
-        }
+        };
 
         $scope.$on('event:imageLoaded', function(event, result) {
             $scope.loadingImage = !result;
@@ -275,7 +275,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     $scope.shippingFetchIndicator = false;
                 }
             );
-        };
+        }
 
         $scope.$watch('currentOrder.CostCenter', function() {
             OrderConfig.address($scope.currentOrder, $scope.user);
@@ -305,7 +305,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     $scope.shippingFetchIndicator = false;
                 }
             );
-        };
+        }
 
         $scope.continueShopping = function() {
             if (confirm('Do you want to save changes to your order before continuing?') == true)
@@ -382,7 +382,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                 item.Selected = true;
                 $scope.saveChanges();
             }
-        }
+        };
 
         //My Code
         $scope.Specs = {};
