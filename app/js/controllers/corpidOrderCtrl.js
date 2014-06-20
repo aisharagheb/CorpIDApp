@@ -10,7 +10,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
         };
         $scope.trusted = function(d){
             if(d) return $sce.trustAsHtml(d);
-        };
+        }
 
         function _search() {
             $scope.searchLoading = true;
@@ -70,7 +70,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     $scope.productCount = data.Count;
                 });
             }
-        };
+        }
 
 //        productCtrl
 
@@ -139,7 +139,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     $scope.showAddToCartErrors = true;
                 }
             );
-        };
+        }
 
         $scope.addToOrder = function(){
             if($scope.lineItemErrors && $scope.lineItemErrors.length){
@@ -174,7 +174,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     $route.reload();
                 }
             );
-        };
+        }
 
         $scope.$on('event:imageLoaded', function(event, result) {
             $scope.loadingImage = false;
@@ -209,19 +209,170 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
         }
         $scope.save = function(){
             saveVariant($scope.Variant);
-        };
+        }
 
         $scope.saveasnew = function() {
             $scope.Variant.InteropID = null;
             saveVariant($scope.Variant);
-        };
+        }
 
         $scope.$on('event:imageLoaded', function(event, result) {
             $scope.loadingImage = !result;
             $scope.$apply();
         });
 
-//        checkOutViewCtrl
+        //CartCtrl
+        $scope.saveChanges = function(callback) {
+            $scope.actionMessage = null;
+            $scope.errorMessage = null;
+            if($scope.currentOrder.LineItems.length == $451.filter($scope.currentOrder.LineItems, {Property:'Selected', Value: true}).length) {
+                $scope.cancelOrder();
+            }
+            else {
+                $scope.displayLoadingIndicator = true;
+                OrderConfig.address($scope.currentOrder, $scope.user);
+                Order.save($scope.currentOrder,
+                    function(data) {
+                        $scope.currentOrder = data;
+                        $scope.displayLoadingIndicator = false;
+                        if (callback) callback();
+                        $scope.actionMessage = 'Your Changes Have Been Saved!';
+                    },
+                    function(ex) {
+                        $scope.errorMessage = ex.Message;
+                        $scope.displayLoadingIndicator = false;
+                    }
+                );
+            }
+        };
+
+
+        $scope.removeItem = function(item) {
+            if (confirm('Are you sure you wish to remove this item from your cart?') == true) {
+                Order.deletelineitem(item.ID,
+                    function(order) {
+                        $scope.currentOrder = order;
+                        $scope.displayLoadingIndicator = false;
+                        $scope.actionMessage = 'Your Changes Have Been Saved!';
+                    },
+                    function (ex) {
+                        $scope.errorMessage = ex.Message;
+                        $scope.displayLoadingIndicator = false;
+                    }
+                );
+            }
+        }
+
+
+        //Jen: hides the create button until it should be displayed
+        $scope.showButton = false;
+        $scope.progress = '0';
+
+        //My Code
+        $scope.Specs = {};
+        $scope.selectedProducts = [];
+        $scope.$on('loaded',function(event,v) {
+            $scope.specs = v.Specs;
+            if( $scope.selectedProducts.length == 0){
+                $scope.selectedProducts.push(v);
+                $scope.showButton = true;
+                $scope.progress = '33';
+            }
+            var isInArr = false;
+            angular.forEach($scope.selectedProducts, function(m){
+                if(m.InteropID == v.InteropID){
+                    isInArr = true;
+                }
+            });
+            if(!isInArr){
+                v.selected = true;
+                $scope.selectedProducts.push(v);
+            }
+            angular.forEach($scope.specs, function (s) {
+                if (!$scope.Specs[s.Name]) {
+                    s.Products = [];
+                    s.Products.push(v.ExternalID);
+                    $scope.Specs[s.Name] = s;
+                }
+                else {
+                    $scope.Specs[s.Name].Products.push(v.ExternalID);
+                }
+            });
+        });
+        $scope.$on('unloaded',function(event,v) {
+            $scope.specs = v.Specs;
+            var isInArr = false;
+            angular.forEach($scope.selectedProducts, function(m){
+                if(m.InteropID == v.InteropID){
+                    isInArr = true;
+                    $scope.showButton = false;
+                    $scope.progress = '0';
+                }
+            });
+            if(isInArr){
+                v.selected = false;
+                for (var i = 0; i < $scope.selectedProducts.length; i++) {
+                    if ($scope.selectedProducts[i].InteropID == v.InteropID) {
+                        $scope.selectedProducts.splice(i, 1);
+                    }
+                }
+            }
+            angular.forEach($scope.specs, function (s) {
+                angular.forEach($scope.Specs, function(spec) {
+                    if (s.Name == spec.Name) {
+                        for (var i = 0; i < spec.Products.length; i++) {
+                            if (spec.Products[i] == v.ExternalID) {
+                                if (spec.Products.length == 1) {
+                                    delete $scope.Specs[s.Name];
+                                }
+                                spec.Products.splice(i, 1);
+                            }
+                        }
+                    }
+                });
+            });
+        });
+
+
+
+        $scope.createOrder = function() {
+            var lineItems = [];
+            angular.forEach($scope.selectedProducts, function(p){
+                var variant = {
+                    "ProductInteropID": p.InteropID,
+                    "Specs": $scope.Specs
+                };
+                Variant.save(variant, function(v){
+                    var lineitem = {
+                        "Quantity": p.Quantity,
+                        "Variant": v,
+                        "Product": p,
+                        "LineTotal": p.StandardPriceSchedule.PriceBreaks[0]* p.length,
+                        "UnitPrice": p.StandardPriceSchedule.PriceBreaks[0],
+                        "Specs": $scope.Specs
+                    };
+                    lineItems.push(lineitem);
+
+                    if(lineItems.length == $scope.selectedProducts.length){
+                        var order = {};
+                        order.LineItems = [];
+                        angular.forEach(lineItems, function(li){
+                            order.LineItems.push(li);
+                        });
+                        Order.save(order,function(o){
+                            $scope.user.currentOrderID = o.ID;
+                            User.save($scope.user, function(user){
+                                $location.path('corpidCheckout');
+                                //if we take it here the progress works but it breaks the order summary delete item functionality
+                                //$location.path('checkout');
+                            })
+                        })
+                    }
+                });
+            })
+        };
+
+        //checkOutViewCtrl
 
 //        if (!$scope.currentOrder) {
 //            $location.path('catalog');
@@ -236,6 +387,56 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
 
         $scope.shipaddress = { Country: 'US', IsShipping: true, IsBilling: false };
         $scope.billaddress = { Country: 'US', IsShipping: false, IsBilling: true };
+
+
+        $scope.isActive = function(path) {
+            var cur_path = $location.path().replace('/', '');
+            var result = false;
+
+            if (path instanceof Array) {
+                angular.forEach(path, function(p) {
+                    if (p == cur_path && !result)
+                        result = true;
+                });
+            }
+            else {
+                if (cur_path == path)
+                    result = true;
+            }
+            return result;
+        };
+
+        if ($scope.isActive('corpidorder')){
+            $scope.progress = '0';
+        }
+        else {
+            $scope.progress = '66';
+        }
+
+        $scope.items = currentOrder.LineItems.length;
+
+        if ($scope.items === '0') {
+            $scope.progress = '0';
+        }
+
+        $scope.checkProgress = function(){
+            if ($scope.currentOrder.ShipAddressID && $scope.currentOrder.BillAddressID){
+                $scope.progress = '98';
+            } else if (($scope.currentOrder.ShipAddressID && !$scope.currentOrder.BillAddressID) || (!$scope.currentOrder.ShipAddressID && $scope.currentOrder.BillAddressID)){
+                $scope.progress = '82';
+            } else {
+                $scope.progress = '66';
+            }
+        };
+
+        $scope.$watch('currentOrder.ShipAddressID', function(n) {
+            $scope.checkProgress();
+        })
+
+        $scope.$watch('currentOrder.BillAddressID', function(n) {
+            $scope.checkProgress();
+        });
+
 
         $scope.$on('event:AddressSaved', function(event, address) {
             if (address.IsShipping) {
@@ -275,7 +476,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     $scope.shippingFetchIndicator = false;
                 }
             );
-        }
+        };
 
         $scope.$watch('currentOrder.CostCenter', function() {
             OrderConfig.address($scope.currentOrder, $scope.user);
@@ -305,7 +506,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     $scope.shippingFetchIndicator = false;
                 }
             );
-        }
+        };
 
         $scope.continueShopping = function() {
             if (confirm('Do you want to save changes to your order before continuing?') == true)
@@ -345,138 +546,5 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
 
         $scope.saveFavorite = function() {
             FavoriteOrder.save($scope.currentOrder);
-        };
-
-        //CartCtrl
-        $scope.saveChanges = function(callback) {
-            $scope.actionMessage = null;
-            $scope.errorMessage = null;
-            if($scope.currentOrder.LineItems.length == $451.filter($scope.currentOrder.LineItems, {Property:'Selected', Value: true}).length) {
-                $scope.cancelOrder();
-            }
-            else {
-                $scope.displayLoadingIndicator = true;
-                OrderConfig.address($scope.currentOrder, $scope.user);
-                Order.save($scope.currentOrder,
-                    function(data) {
-                        $scope.currentOrder = data;
-                        $scope.displayLoadingIndicator = false;
-                        if (callback) callback();
-                        $scope.actionMessage = 'Your Changes Have Been Saved!';
-                    },
-                    function(ex) {
-                        $scope.errorMessage = ex.Message;
-                        $scope.displayLoadingIndicator = false;
-                    }
-                );
-            }
-        };
-        $scope.removeItem = function(item) {
-            if ($scope.currentOrder.LineItems.length > 1) {
-                if (confirm('Are you sure you wish to remove this item from your cart?') == true) {
-                    item.Selected = true;
-                    $scope.saveChanges();
-                }
-            }
-            else {
-                item.Selected = true;
-                $scope.saveChanges();
-            }
-        };
-
-        //My Code
-        $scope.Specs = {};
-        $scope.selectedProducts = [];
-        $scope.$on('loaded',function(event,v) {
-            $scope.specs = v.Specs;
-            if( $scope.selectedProducts.length == 0){
-                $scope.selectedProducts.push(v);
-            }
-            var isInArr = false;
-            angular.forEach($scope.selectedProducts, function(m){
-                if(m.InteropID == v.InteropID){
-                    isInArr = true;
-                }
-            });
-            if(!isInArr){
-                v.selected = true;
-                $scope.selectedProducts.push(v);
-            }
-            angular.forEach($scope.specs, function (s) {
-                if (!$scope.Specs[s.Name]) {
-                    s.Products = [];
-                    s.Products.push(v.ExternalID);
-                    $scope.Specs[s.Name] = s;
-                }
-                else {
-                    $scope.Specs[s.Name].Products.push(v.ExternalID);
-                }
-            });
-        });
-        $scope.$on('unloaded',function(event,v) {
-            $scope.specs = v.Specs;
-            var isInArr = false;
-            angular.forEach($scope.selectedProducts, function(m){
-                if(m.InteropID == v.InteropID){
-                    isInArr = true;
-                }
-            });
-            if(isInArr){
-                v.selected = false;
-                for (var i = 0; i < $scope.selectedProducts.length; i++) {
-                    if ($scope.selectedProducts[i].InteropID == v.InteropID) {
-                        $scope.selectedProducts.splice(i, 1);
-                    }
-                }
-            }
-            angular.forEach($scope.specs, function (s) {
-                angular.forEach($scope.Specs, function(spec) {
-                    if (s.Name == spec.Name) {
-                        for (var i = 0; i < spec.Products.length; i++) {
-                            if (spec.Products[i] == v.ExternalID) {
-                                if (spec.Products.length == 1) {
-                                    delete $scope.Specs[s.Name];
-                                }
-                                spec.Products.splice(i, 1);
-                            }
-                        }
-                    }
-                });
-            });
-        });
-
-        $scope.createOrder = function() {
-            var lineItems = [];
-            angular.forEach($scope.selectedProducts, function(p){
-                var variant = {
-                    "ProductInteropID": p.InteropID,
-                    "Specs": $scope.Specs
-                };
-                Variant.save(variant, function(v){
-                    var lineitem = {
-                        "Quantity": p.Quantity,
-                        "Variant": v,
-                        "Product": p,
-                        "LineTotal": p.StandardPriceSchedule.PriceBreaks[0]* p.length,
-                        "UnitPrice": p.StandardPriceSchedule.PriceBreaks[0],
-                        "Specs": $scope.Specs
-                    };
-                    lineItems.push(lineitem);
-
-                    if(lineItems.length == $scope.selectedProducts.length){
-                        var order = {};
-                        order.LineItems = [];
-                        angular.forEach(lineItems, function(li){
-                            order.LineItems.push(li);
-                        });
-                        Order.save(order,function(o){
-                            $scope.user.currentOrderID = o.ID;
-                            User.save($scope.user, function(user){
-                                $location.path('corpidCheckout');
-                            })
-                        })
-                    }
-                });
-            })
         };
     }]);

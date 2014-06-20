@@ -4,3 +4,123 @@ Theme name: My SPA Theme
 Version: 1.0
 Template: Howdy
 */
+
+.top-buffer {
+    margin-top:330px;
+}
+.bottom-buffer {
+    margin-bottom: 330px;
+}
+
+.progress {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+}
+
+.progress-bar {
+    color: #ffffff;
+}
+
+#configure .panel-product-list  {
+    margin:0 0 10px 0;
+    padding:0;
+}
+
+/*#configure .panel-product-list .well {
+ margin:0;
+ padding:0;
+}
+
+#configure .panel-product-list .well ul  {
+  padding:0;
+}*/
+
+.buttonConfig {
+    position: relative;
+    top: 50%;
+    transform: translateY(110%);
+}
+
+.form-group {
+    margin:0;
+    padding:0;
+}
+
+select.corpid {
+    margin-top:-20px;
+    margin-bottom:0;
+}
+
+@media (max-width: 1024px) {
+    h3, .h3 {
+        font-size: 20px;
+    }
+
+    .buttonConfig {
+        position: relative;
+        top: 50%;
+        transform: translateY(10%);
+    }
+}
+
+@media (max-width: 768px) {
+    .panel-product-list .well {
+        font-size:95%;
+    }
+
+    #configure .panel-product-list  {
+        border:1px solid #cccccc;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+}
+
+
+@media (max-width: 600px) {
+    h3, .h3 {
+        font-size: 18px;
+    }
+
+    h1, .h1 {
+
+        font-size: 18px;
+    }
+    .top-buffer {
+        margin-top:150px;
+    }
+    .bottom-buffer {
+        margin-bottom: 150px;
+    }
+
+}
+
+@media (max-width: 320px) {
+    h3, .h3 {
+        font-size: 16px;
+    }
+
+    h1, .h1 {
+
+        font-size: 16px;
+    }
+
+    .top-buffer {
+        margin-top:150px;
+    }
+    .bottom-buffer {
+        margin-bottom: 150px;
+    }
+}
+
+
+@media (max-width: 1024px){
+    .top-buffer {
+        margin-top:150px;
+    }
+    .bottom-buffer {
+        margin-bottom: 150px;
+    }
+
+}

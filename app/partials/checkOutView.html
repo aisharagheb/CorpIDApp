@@ -1,4 +1,13 @@
 <section>
+    <div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <progressbar value="progress">{{progress}}%</progressbar></div>
+            <!--<progressbar value="50">50%</progressbar></div>-->
+        </div>
+    </div>
+</section>
+<section>
     <loadingindicator ng-show="displayLoadingIndicator" title="Please wait while we update your order" />
     <div class="col-md-4 col-md-offset-1 col-md-push-7 col-collapse">
         <ordersummary />
@@ -22,10 +31,10 @@
             <div class="view-error-message" ng-show="(cart_order.$error.required.length + cart_billing.$error.required.length + cart_shipping.$error.required.length) > 0">
                 <ul class="alert-warning">
                     <li class="text-center">
-                        <span class="badge">
-                            <i class="fa fa-exclamation-circle fa-inverse"></i>
-                            {{cart_order.$error.required.length + cart_billing.$error.required.length + cart_shipping.$error.required.length}}
-                        </span>
+                       <span class="badge">
+                           <i class="fa fa-exclamation-circle fa-inverse"></i>
+                           {{cart_order.$error.required.length + cart_billing.$error.required.length + cart_shipping.$error.required.length}}
+                       </span>
                     </li>
                     <li class="text-center">
                         <ul ng-class="{'one': errorSection == 'open', 'two': errorSection == '' }">
