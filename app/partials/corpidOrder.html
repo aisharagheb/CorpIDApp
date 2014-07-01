@@ -39,7 +39,7 @@
                     </div>
                     <!--<div>-->
                     <ul>
-                        <li id="451_lst_prod" ng-repeat="product in LineItem.Product.List | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize | orderBy:sorter:direction | variable">
+                        <li id="451_lst_prod" ng-repeat="product in LineItem.Product.List | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize | orderBy:sorter:direction | variable" ng-init="Product.preview = false">
                             <div class="well">
                                 <shortproductview p="product" user="user" />
                             </div>
@@ -64,8 +64,9 @@
                         <customtextfield hideSuffix="true" hidePrefix="true" customfield="s" ng-if="s.ControlType == 'Text'"></customtextfield>
                         <customselectionfield hideSuffix="true" hidePrefix="true" customfield="s" ng-if="s.ControlType == 'Selection'" class="row"></customselectionfield>
                     </div>
+                    <br/>
                     <div ng-hide="showButton === false">
-                        <button ng-disabled="specForm.$invalid" class="btn btn-primary pull-right" type="submit" ng-click="createOrder()">Create</button>
+                        <button ng-disabled="specForm.$invalid" class="btn btn-lg btn-primary pull-right" type="submit" ng-click="createOrder()">Create</button>
                     </div>
                 </form>
             </div>

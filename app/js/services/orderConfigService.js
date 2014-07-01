@@ -50,11 +50,14 @@ four51.app.factory('OrderConfig', function() {
 	}
 
 	var showOrderDetails = function() {
-		return (user.Permissions.contains('EditPOID') ||
-			user.Permissions.contains('Comments') ||
-			(user.Permissions.contains('CostCenterPerOrder') && !user.Permissions.contains('CostCenterPerLine')) ||
-			order.OrderFields.length > 0);
-	}
+        if(user){
+            return (user.Permissions.contains('EditPOID') ||
+                user.Permissions.contains('Comments') ||
+                (user.Permissions.contains('CostCenterPerOrder') && !user.Permissions.contains('CostCenterPerLine')) ||
+                order.OrderFields.length > 0);
+        }
+
+	};
 
 	function _hasAddress() {
 		if (!order) return false;

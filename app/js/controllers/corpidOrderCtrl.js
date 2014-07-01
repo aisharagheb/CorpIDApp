@@ -361,12 +361,15 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     lineItems.push(lineitem);
 
                     if(lineItems.length == $scope.selectedProducts.length){
-                        var order = {};
-                        order.LineItems = [];
+                        if(!$scope.currentOrder){
+                            $scope.currentOrder = {};
+                            $scope.currentOrder.LineItems = [];
+                        }
+
                         angular.forEach(lineItems, function(li){
-                            order.LineItems.push(li);
+                            $scope.currentOrder.LineItems.push(li);
                         });
-                        Order.save(order,function(o){
+                        Order.save($scope.currentOrder,function(o){
                             $scope.user.currentOrderID = o.ID;
                             User.save($scope.user, function(user){
                                 $location.path('corpidCheckout');

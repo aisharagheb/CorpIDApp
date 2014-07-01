@@ -37,7 +37,7 @@ Template: Howdy
 
 .buttonConfig {
     position: relative;
-    top: 50%;
+    top: 30%;
     transform: translateY(110%);
 }
 
@@ -58,7 +58,7 @@ select.corpid {
 
     .buttonConfig {
         position: relative;
-        top: 50%;
+        top: 30%;
         transform: translateY(10%);
     }
 }
