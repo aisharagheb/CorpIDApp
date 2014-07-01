@@ -117,15 +117,18 @@ four51.app.factory('Order', ['$resource', '$rootScope', '$451', 'Security', 'Err
         );
     }
 
-    var _deletelineitem = function(id, success, error) {
+    var _deletelineitem = function(id, lineitemid, success, error) {
         store.remove('451Cache.Order.' + id);
-        $resource($451.api('order'), {}, { deletelineitem: { method: 'DELETE', params: { 'id': id }}}).deletelineitem().$promise.then(
+        $resource($451.api('order/:id/lineitem/:lineitemid'), {'id': id, 'lineitemid': lineitemid }, { lineitemdelete: { method: 'DELETE'}}).lineitemdelete().$promise.then(
             function(o) {
-                if (o) {
+                if (o.ID) {
                     store.set('451Cache.Order.' + o.ID, o);
                     _extend(o);
+                    _then(success, o);
+                } else {
+                    store.remove('451Cache.User' + $451.apiName);
+                    _then(success, null);
                 }
-                _then(success, o);
             },
             function(ex) {
                 error(Error.format(ex));

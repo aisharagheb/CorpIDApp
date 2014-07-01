@@ -250,9 +250,15 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
 
         $scope.removeItem = function(item) {
             if (confirm('Are you sure you wish to remove this item from your cart?') == true) {
-                Order.deletelineitem(item.ID,
+                Order.deletelineitem($scope.currentOrder.ID, item.ID,
                     function(order) {
                         $scope.currentOrder = order;
+                        if (!order) {
+                            $scope.user.CurrentOrderID = null;
+                            User.save($scope.user, function(){
+                                $location.path('corpidorder');
+                            });
+                        }
                         $scope.displayLoadingIndicator = false;
                         $scope.actionMessage = 'Your Changes Have Been Saved!';
                     },
@@ -262,10 +268,7 @@ four51.app.controller('corpidOrderCtrl', ['$routeParams', '$sce', '$scope', '$45
                     }
                 );
             }
-            if($scope.currentOrder.LineItems.length == 1){
-                $location.path('/corpidorder');
-            }
-        };
+        }
 
 
         //Jen: hides the create button until it should be displayed
