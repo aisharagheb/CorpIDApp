@@ -13,10 +13,10 @@
                     <button id="remove" ng-click="removeVariant(LineItem)" ng-show="LineItem.Product.selected" class="btn btn-danger">
                         Remove
                     </button>
-                    <button ng-click="LineItem.Product.preview = !LineItem.Product.preview" class="btn btn-info">
-                        Product Info
-                    </button>
                 </a>
+                <figure style="padding: 10px;">
+                    <img ng-src="{{LineItem.Product.SmallImageUrl}}" class="img-responsive">
+                </figure>
             </section>
             <section class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
                 <h3>{{LineItem.Product.Name}}</h3>
@@ -54,15 +54,7 @@
                     </button>
                 </div>
             </section>
-            <div collapse="!LineItem.Product.preview">
-                <figure>
-                    <img ng-src="LineItem.Product.SmallImageUrl">
-                    <div>
-                        {{LineItem.Product.Description}}
-                    </div>
-                </figure>
 
-            </div>
         </div><!--.panel-body-->
     </div><!--.col-xs-12 col-sm-12 col-md-5 col-lg-5-->
 </div><!--.451qa_prod_item row-->
